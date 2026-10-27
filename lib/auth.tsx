@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLoginGoogle } from './google';
+import { registrarIngreso } from './registro';
 
 export type Rol = 'cliente' | 'trabajador';
 
@@ -45,7 +46,9 @@ function useSesionInterna() {
       setEntrando(true);
       try {
         const perfil = await google.iniciar();
-        if (perfil) await guardar({ ...perfil, invitado: false, rol: null });
+        if (!perfil) return; // cerro la ventana
+        registrarIngreso(perfil); // queda en la base quien entro
+        await guardar({ ...perfil, invitado: false, rol: null });
       } catch (e) {
         setError(e instanceof Error ? e.message : 'No se pudo entrar con Google.');
       } finally {
