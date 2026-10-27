@@ -8,6 +8,7 @@ import { TRABAJADORES } from '../lib/mock';
 import { buscarCandidatos, marcarPatrocinado } from '../lib/ranking';
 import { nombreOficio } from '../lib/oficios';
 import { TarjetaTrabajador } from '../components/Tarjeta';
+import { MapaResultados } from '../components/mapa/MapaResultados';
 import type { ResultadoBusqueda } from '../lib/tipos';
 
 export default function Resultados() {
@@ -15,6 +16,7 @@ export default function Resultados() {
   const router = useRouter();
   const { q, oficio } = useLocalSearchParams<{ q?: string; oficio?: string }>();
   const { origen, esReal, cargando: cargandoGps } = useUbicacion();
+  const [vista, setVista] = useState<'lista' | 'mapa'>('lista');
 
   const [datos, setDatos] = useState<ResultadoBusqueda | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -124,16 +126,41 @@ export default function Resultados() {
               de la que mas te conviene a la que menos.
             </Text>
 
-            {sugerencias.map((s) => (
-              <TarjetaTrabajador
-                key={s.trabajador.id}
-                trabajador={s.trabajador}
-                distanciaKm={s.distanciaKm}
-                razon={s.razon}
-                patrocinado={s.patrocinado}
-                onPress={() => router.push(`/trabajador/${s.trabajador.id}`)}
+            {/* Mismos resultados, dos formas de verlos. La lista sigue
+                siendo la principal: ordena por lo que mas te conviene. */}
+            <View style={[e.selector, { backgroundColor: c.tarjeta, borderColor: c.borde }]}>
+              {(['lista', 'mapa'] as const).map((v) => (
+                <Pressable
+                  key={v}
+                  onPress={() => setVista(v)}
+                  style={[e.opcion, vista === v && { backgroundColor: c.primario }]}
+                >
+                  <Text style={{ color: vista === v ? '#fff' : c.texto, fontWeight: '700', fontSize: 13 }}>
+                    {v === 'lista' ? 'Lista' : 'Mapa'}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            {vista === 'mapa' ? (
+              <MapaResultados
+                sugerencias={sugerencias}
+                origen={origen}
+                origenEsReal={esReal}
+                onAbrirPerfil={(id) => router.push(`/trabajador/${id}`)}
               />
-            ))}
+            ) : (
+              sugerencias.map((s) => (
+                <TarjetaTrabajador
+                  key={s.trabajador.id}
+                  trabajador={s.trabajador}
+                  distanciaKm={s.distanciaKm}
+                  razon={s.razon}
+                  patrocinado={s.patrocinado}
+                  onPress={() => router.push(`/trabajador/${s.trabajador.id}`)}
+                />
+              ))
+            )}
           </>
         )}
 
@@ -168,4 +195,6 @@ function Centro({ children }: { children: React.ReactNode }) {
 const e = StyleSheet.create({
   lectura: { padding: espacio.md, borderRadius: radio.medio, gap: espacio.xs },
   fila: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 2 },
+  selector: { flexDirection: 'row', borderWidth: 1, borderRadius: 999, padding: 3 },
+  opcion: { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: 999 },
 });
