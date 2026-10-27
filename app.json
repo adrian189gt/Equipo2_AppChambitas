@@ -35,7 +35,9 @@
         {
           "locationWhenInUsePermission": "Chambitas usa tu ubicación para mostrarte trabajadores cerca de ti."
         }
-      ]
+      ],
+      "expo-web-browser",
+      "@react-native-google-signin/google-signin"
     ],
     "scheme": "chambitas",
     "extra": {
