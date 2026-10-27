@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Chambitas",
-    "slug": "chambitas",
+    "slug": "chambitasmx",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,7 +19,11 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "mx.chambitas.app",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +37,13 @@
         }
       ]
     ],
-    "scheme": "chambitas"
+    "scheme": "chambitas",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "01de4817-7325-4c8e-acd4-e56c3e89d46e"
+      }
+    },
+    "owner": "andres07s-team"
   }
 }
